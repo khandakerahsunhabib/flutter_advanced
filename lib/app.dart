@@ -1,48 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-final CounterController counterController = CounterController();
-
-class _MyAppState extends State<MyApp> {
   // int count = 0;
-  //
-  // void _increment() {
-  //   count++;
-  //   setState(() {});
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen());
+    return ChangeNotifierProvider(
+      create: (_) => CounterController(),
+      child: MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen()),
+    );
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
+    final counterController = context.read<CounterController>();
     return Scaffold(
       appBar: AppBar(title: Text('State Management Part One')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: ListenableBuilder(
-              listenable: counterController,
-              builder: (context, child) {
-                return Text('${counterController.count}');
+            child: Consumer<CounterController>(
+              builder: (context, counter, child) {
+                return Text('${counter.count}');
               },
             ),
           ),
@@ -60,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          counterController.increment();
+          context.read<CounterController>().increment();
         },
         child: Icon(Icons.add),
       ),
@@ -68,26 +54,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  @override
   Widget build(BuildContext context) {
+    final counterController = context.read<CounterController>();
     return Scaffold(
       appBar: AppBar(title: Text('Profile Screen')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: ListenableBuilder(
-              listenable: counterController,
-              builder: (context, child) {
-                return Text('${counterController.count}');
+            child: Consumer<CounterController>(
+              builder: (context, counter, child) {
+                return Text('${counter.count}');
               },
             ),
           ),
@@ -105,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          counterController.increment();
+          Provider.of<CounterController>(context, listen: false).increment();
         },
         child: Icon(Icons.add),
       ),
@@ -113,21 +94,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  @override
   Widget build(BuildContext context) {
+    final counterController = context.read<CounterController>();
     return Scaffold(
       appBar: AppBar(title: Text('Settings Screen')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Center(child: Text("${counterController.count}"))],
+        children: [
+          Center(
+            child: Consumer<CounterController>(
+              builder: (context, counter, child) {
+                return Text('${counter.count}');
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
